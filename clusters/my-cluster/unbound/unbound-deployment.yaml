@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: unbound
+  labels:
+    app: unbound
+  name: unbound
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unbound
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: unbound
+    spec:
+      containers:
+      - name: unbound
+        image: klutchell/unbound
+        volumeMounts:
+        - name: config-volume
+          mountPath: "/etc/unbound/unbound.conf"
+          subPath: unbound.conf
+        - name: config-volume
+          mountPath: "/etc/unbound/root.hints"
+          subPath: root.hints
+        securityContext:
+          privileged: true
+        resources: {}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: unbound-config
